@@ -7,6 +7,7 @@ LLMs to perform accurate equilibrium and kinetics calculations.
 import logging
 from typing import Any
 
+import cantera as ct
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 
@@ -99,8 +100,6 @@ async def call_tool(name: str, arguments: dict[str, Any]) -> list[dict[str, Any]
         List of text content results from the tool execution
     """
     try:
-        import cantera as ct
-        
         if name == "get_gas_properties":
             return await get_gas_properties(
                 mechanism=arguments["mechanism"],
@@ -143,8 +142,6 @@ async def get_gas_properties(
     Returns:
         List containing text result with gas properties
     """
-    import cantera as ct
-    
     # Create gas object
     gas = ct.Solution(mechanism)
     gas.TPX = temperature, pressure, composition
@@ -185,8 +182,6 @@ async def equilibrate_gas(
     Returns:
         List containing text result with equilibrium composition
     """
-    import cantera as ct
-    
     # Create gas object
     gas = ct.Solution(mechanism)
     gas.TPX = temperature, pressure, composition
