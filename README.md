@@ -4,7 +4,7 @@ An MCP server wrapped around Cantera to facilitate use by an LLM for accurate eq
 
 ## Overview
 
-This MCP (Model Context Protocol) server provides an interface to Cantera, a powerful open-source software suite for problems involving chemical kinetics, thermodynamics, and transport processes. The server enables LLMs to perform accurate chemical equilibrium calculations and kinetics simulations through a standardized API.
+This MCP (Model Context Protocol) server provides an interface to Cantera, a powerful open-source software suite for problems involving chemical kinetics, thermodynamics, and transport processes. The [...]
 
 ## Features
 
@@ -15,6 +15,21 @@ This MCP (Model Context Protocol) server provides an interface to Cantera, a pow
 
 ## Installation
 
+### Prerequisites
+
+- Python 3.10 or higher
+- [uv](https://docs.astral.sh/uv/) package manager
+
+If you don't have uv installed, you can install it with:
+
+```bash
+# On macOS and Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# On Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
 ### From Source
 
 ```bash
@@ -23,13 +38,13 @@ git clone https://github.com/davetew/mcp-server-cantera.git
 cd mcp-server-cantera
 
 # Install the package
-pip install -e .
+uv pip install -e .
 ```
 
 ### With Development Dependencies
 
 ```bash
-pip install -e ".[dev]"
+uv pip install -e ".[dev]"
 ```
 
 ## Requirements
@@ -47,6 +62,54 @@ The server can be started using the command-line interface:
 ```bash
 mcp-server-cantera
 ```
+
+### Configuring Claude Desktop
+
+To use this MCP server with Claude Desktop, you need to add it to your Claude configuration file:
+
+#### macOS
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cantera": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/ABSOLUTE/PATH/TO/mcp-server-cantera",
+        "run",
+        "mcp-server-cantera"
+      ]
+    }
+  }
+}
+```
+
+#### Windows
+
+Edit `%APPDATA%\Claude\claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cantera": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "C:\ABSOLUTE\PATH\TO\mcp-server-cantera",
+        "run",
+        "mcp-server-cantera"
+      ]
+    }
+  }
+}
+```
+
+**Important:** Replace `/ABSOLUTE/PATH/TO/mcp-server-cantera` (or `C:\ABSOLUTE\PATH\TO\mcp-server-cantera` on Windows) with the actual absolute path to your cloned repository.
+
+After updating the configuration file, restart Claude Desktop for the changes to take effect.
 
 ### Available Tools
 
@@ -103,25 +166,25 @@ Calculate equilibrium composition of a gas mixture.
 ### Running Tests
 
 ```bash
-pytest
+uv run pytest
 ```
 
 ### Code Formatting
 
 ```bash
-black src/
+uv run black src/
 ```
 
 ### Linting
 
 ```bash
-ruff check src/
+uv run ruff check src/
 ```
 
 ### Type Checking
 
 ```bash
-mypy src/
+uv run mypy src/
 ```
 
 ## Contributing
