@@ -23,4 +23,4 @@ def test_server_module_import():
     from mcp_server_cantera import server
     
     assert hasattr(server, "main")
-    assert hasattr(server, "app")
+    assert hasattr(server, "mcp")
