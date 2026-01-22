@@ -1,7 +1,8 @@
 """Main MCP server module for Cantera integration.
 
 This module provides an MCP server that wraps Cantera functionality to enable
-LLMs to perform accurate equilibrium, thermodynamic, and transport calculations.
+LLMs to perform accurate equilibrium and kinetic analyses while also providing
+thermodynamic and transport properties.
 
 Uses FastMCP for a clean, decorator-based API with Pydantic models for validation.
 """
@@ -17,7 +18,21 @@ import cantera as ct
 import numpy as np
 import yaml
 from fastmcp import FastMCP
-from pydantic import BaseModel, Field, field_validator
+from .schema import (
+    LabBenchMeasurementInput,
+    LabBenchEquilibriumInput,
+    CombustionInput,
+    SpeciesInput,
+    MechanismInput,
+    MetalCombustionInput,
+    LabBenchMixtureInput,
+    ReactionRatesInput,
+    SpeciesProductionInput,
+    BatchReactorInput,
+    IgnitionDelayInput,
+    SpeciesThermoInput,
+    SpeciesAvailabilityInput,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -35,6 +50,8 @@ CRITICAL RULES:
 3. **State Management:** When running reactor simulations (time-integration), the state of the gas object is UPDATED to the final time. 
    - If the user wants to run a second test from the *original* conditions, you must explicitly reset the state using 'set_state' first.
 4. **Safety:** If a user asks for a detonation simulation or hazardous mixture, provide the scientific results but add a standard safety disclaimer.
+5. **Ambient Conditions:** If the user asks for a reaction at ambient conditions, use 298 K and 1 atm (101,325 Pa).
+6. **Temperature:** If the user asks for a reaction at a specific temperature, use that temperature. Otherwise, use 298 K.
 """
 
 # Create the FastMCP server instance
@@ -68,214 +85,6 @@ def store_solution(name: str, gas: ct.Solution) -> None:
     """Store a solution on the lab bench with a unique name."""
     _lab_bench[name] = gas
     logger.info(f"Stored solution '{name}' on lab bench (T={gas.T:.1f}K, P={gas.P:.0f}Pa)")
-
-
-# =============================================================================
-# Pydantic Models for Input Validation
-# =============================================================================
-
-class LabBenchMeasurementInput(BaseModel):
-    """Input model for measuring properties of a lab bench mixture."""
-    
-    name: str = Field(
-        ...,
-        description="The ID of the mixture on the lab bench",
-        examples=["flame_1", "reactor"],
-    )
-
-
-class LabBenchEquilibriumInput(BaseModel):
-    """Input model for equilibrating a lab bench mixture."""
-    
-    name: str = Field(
-        ...,
-        description="The ID of the mixture on the lab bench",
-        examples=["flame_1", "reactor"],
-    )
-    basis: Literal["TP", "HP", "SP", "UV"] = Field(
-        default="TP",
-        description="Equilibration basis: 'TP' (constant T,P), 'HP' (adiabatic, constant P), 'SP' (isentropic), 'UV' (constant U,V)",
-    )
-
-
-class CombustionInput(BaseModel):
-    """Input model for combustion calculations."""
-    
-    mechanism: str = Field(
-        ...,
-        description="Cantera mechanism file (e.g., 'gri30.yaml' for methane combustion)",
-        examples=["gri30.yaml", "JetSurf2.yaml"],
-    )
-    fuel: str = Field(
-        ...,
-        description="Fuel composition (e.g., 'CH4:1' or 'H2:1' or 'CH4:0.9, C2H6:0.1')",
-        examples=["CH4:1", "H2:1", "NC12H26:1"],
-    )
-    oxidizer: str = Field(
-        ...,
-        description="Oxidizer composition (e.g., 'O2:1, N2:3.76' for air)",
-        examples=["O2:1, N2:3.76", "O2:1"],
-    )
-    equivalence_ratio: float = Field(
-        ...,
-        gt=0,
-        le=10,
-        description="Equivalence ratio (phi). phi=1 is stoichiometric, phi<1 is lean, phi>1 is rich",
-        examples=[1.0, 0.8, 1.2],
-    )
-    initial_temperature: float = Field(
-        ...,
-        gt=0,
-        description="Initial temperature in Kelvin (typically 298.15 K)",
-        examples=[298.15, 300.0, 400.0],
-    )
-    pressure: float = Field(
-        ...,
-        gt=0,
-        description="Pressure in Pascals",
-        examples=[101325.0, 500000.0],
-    )
-    
-    @field_validator("fuel", "oxidizer")
-    @classmethod
-    def validate_composition(cls, v: str) -> str:
-        """Validate composition string format."""
-        if not v or not v.strip():
-            raise ValueError("Composition cannot be empty")
-        if ":" not in v:
-            raise ValueError("Composition must be in format 'Species:amount'")
-        return v.strip()
-
-
-class SpeciesInput(BaseModel):
-    """Input model for species property lookup."""
-    
-    mechanism: str = Field(
-        ...,
-        description="Cantera mechanism file or mechanism name",
-        examples=["gri30.yaml", "air.yaml"],
-    )
-    species_name: str = Field(
-        ...,
-        description="Name of the species (e.g., 'CH4', 'O2', 'H2O')",
-        examples=["CH4", "O2", "H2O", "CO2"],
-    )
-    temperature: float = Field(
-        ...,
-        gt=0,
-        description="Temperature in Kelvin for property evaluation",
-        examples=[298.15, 500.0, 1000.0],
-    )
-
-
-class MechanismInput(BaseModel):
-    """Input model for mechanism queries."""
-    
-    mechanism: str = Field(
-        ...,
-        description="Cantera mechanism file or mechanism name",
-        examples=["gri30.yaml", "air.yaml", "JetSurf2.yaml"],
-    )
-
-
-class MetalCombustionInput(BaseModel):
-    """Input model for metal-oxygen/air combustion equilibrium calculations."""
-    
-    metal: str = Field(
-        ...,
-        description="Metal element symbol (e.g., 'Fe', 'Al', 'Mg', 'Ti', 'Zn')",
-        examples=["Fe", "Al", "Mg", "Ti", "Zn", "Cu"],
-    )
-    oxidizer: Literal["O2", "air"] = Field(
-        default="air",
-        description="Oxidizer type: 'O2' for pure oxygen or 'air' for N2:3.76, O2:1 mixture",
-    )
-    equivalence_ratio: float = Field(
-        default=1.0,
-        gt=0,
-        le=10,
-        description="Equivalence ratio (phi). phi=1 is stoichiometric, phi<1 is lean (excess oxidizer), phi>1 is rich (excess metal)",
-    )
-    initial_temperature: float = Field(
-        default=298.15,
-        gt=0,
-        description="Initial temperature in Kelvin",
-        examples=[298.15, 500.0, 1000.0],
-    )
-    pressure: float = Field(
-        default=101325.0,
-        gt=0,
-        description="Pressure in Pascals",
-        examples=[101325.0, 500000.0],
-    )
-
-
-class LabBenchMixtureInput(BaseModel):
-    """Input model for creating a named mixture on the lab bench."""
-    
-    name: str = Field(
-        ...,
-        description="Unique identifier for this mixture on the lab bench (e.g., 'combustor_1', 'test_mixture')",
-        examples=["flame_1", "reactor_inlet", "exhaust_gas"],
-    )
-    mechanism: str = Field(
-        ...,
-        description="Cantera mechanism file (e.g., 'gri30.yaml' for natural gas combustion)",
-        examples=["gri30.yaml", "h2o2.yaml", "JetSurf2.yaml"],
-    )
-    temperature: float = Field(
-        ...,
-        gt=0,
-        description="Temperature in Kelvin",
-        examples=[298.15, 1500.0, 2000.0],
-    )
-    pressure: float = Field(
-        ...,
-        gt=0,
-        description="Pressure in Pascals",
-        examples=[101325.0, 500000.0],
-    )
-    composition: str = Field(
-        ...,
-        description="Mixture composition in Cantera format (e.g., 'CH4:1, O2:2, N2:7.52')",
-        examples=["CH4:1, O2:2, N2:7.52", "H2:2, O2:1, N2:3.76"],
-    )
-
-
-class ReactionRatesInput(BaseModel):
-    """Input model for getting reaction rates from a lab bench mixture."""
-    
-    name: str = Field(
-        ...,
-        description="The ID of the mixture on the lab bench",
-        examples=["flame_1", "reactor"],
-    )
-    threshold: float = Field(
-        default=1e-6,
-        description="Minimum net rate of progress (kmol/m³/s) to report. Use lower values (e.g., 1e-9) to see slow initiation steps.",
-        examples=[1e-6, 1e-9, 1e-3],
-    )
-
-
-class SpeciesProductionInput(BaseModel):
-    """Input model for species production/consumption pathway analysis."""
-    
-    name: str = Field(
-        ...,
-        description="The ID of the mixture on the lab bench",
-        examples=["flame_1", "reactor"],
-    )
-    species: str = Field(
-        ...,
-        description="Species name to analyze (e.g., 'OH', 'NO', 'CO2')",
-        examples=["OH", "NO", "CO2", "H2O"],
-    )
-    limit: int = Field(
-        default=5,
-        ge=1,
-        le=20,
-        description="Number of top reactions to show for production and consumption",
-    )
 
 
 # =============================================================================
@@ -329,6 +138,63 @@ def resolve_mechanism(mechanism: str) -> str:
         return str(custom_path)
     
     return mechanism
+
+
+# =============================================================================
+# Species Thermodynamic Lookup with Database Fallback
+# =============================================================================
+
+def _get_thermo_state(species_name: str, temp_k: float, pressure_pa: float) -> tuple[ct.Solution | None, str]:
+    """
+    Create a Cantera Solution object for a single species with database fallback.
+    
+    Fallback order:
+    1. GRI-Mech 3.0 (fast, pre-compiled, common combustion species)
+    2. NASA Gas Database (covers ~1000+ species including noble gases, metals, etc.)
+    
+    Args:
+        species_name: Chemical formula or species name (e.g., 'CH4', 'He', 'Xe')
+        temp_k: Temperature in Kelvin
+        pressure_pa: Pressure in Pascals
+        
+    Returns:
+        Tuple of (Solution object or None, source description or error message)
+    """
+    # 1. Try GRI-Mech 3.0 first (fast lookup for common combustion species)
+    try:
+        gas = ct.Solution('gri30.yaml')
+        gas.species_index(species_name)  # Raises ValueError if not found
+        gas.TPX = temp_k, pressure_pa, {species_name: 1.0}
+        return gas, "GRI-Mech 3.0"
+    except (ValueError, RuntimeError, ct.CanteraError):
+        pass  # Species not in GRI 3.0, proceed to fallback
+    
+    # 2. Fallback to NASA Gas Database
+    nasa_gas_path = get_custom_mechanisms_dir() / "nasa_gas.yaml"
+    
+    if not nasa_gas_path.exists():
+        return None, f"NASA gas database not found at {nasa_gas_path}"
+    
+    try:
+        # Load all species definitions from NASA database
+        found_species = ct.Species.list_from_file(str(nasa_gas_path))
+        
+        # Case-insensitive search for the target species
+        target_species = next(
+            (s for s in found_species if s.name.upper() == species_name.upper()), 
+            None
+        )
+        
+        if target_species:
+            # Dynamically construct a phase with just this one species
+            gas = ct.Solution(thermo='ideal-gas', species=[target_species])
+            gas.TPX = temp_k, pressure_pa, {target_species.name: 1.0}
+            return gas, "NASA Gas Database (nasa_gas.yaml)"
+            
+    except Exception as e:
+        return None, f"Error loading from NASA database: {e}"
+    
+    return None, f"Species '{species_name}' not found in GRI 3.0 or NASA Gas databases."
 
 
 # =============================================================================
@@ -389,6 +255,9 @@ def build_metal_combustion_mechanism(metal: str) -> tuple[str, list[str], list[s
     
     Extracts metal and metal oxide species from NASA databases and creates
     a complete mechanism with gas and condensed phases for multi-phase equilibrium.
+
+    Please note that in the NASA condensed database, the phase is noted in a suffix to the species name, e.g. Fe(a), Fe(c), Fe(L)
+    (L) denotes a liquid, and (s), (cr), (a), (b),(c) or (d) denote a solid.
     
     Args:
         metal: Metal element symbol (e.g., 'Fe', 'Al', 'Mg')
@@ -817,6 +686,90 @@ Total reactions: {mix.n_reactions}
 
 
 @mcp.tool()
+def get_species_thermo(params: SpeciesThermoInput) -> str:
+    """Calculate thermodynamic properties for a specific species with automatic database fallback.
+    
+    Searches GRI-Mech 3.0 first (fast, common combustion species), then falls back to
+    the NASA Gas Database for broader coverage (~1000+ species including noble gases, metals, etc.).
+    """
+    # Convert bar to Pascals
+    pressure_pa = params.pressure_bar * 100000.0
+    
+    # Get the phase object using fallback logic
+    gas, source = _get_thermo_state(params.species, params.temperature_k, pressure_pa)
+    
+    if gas is None:
+        return f"Error: Could not find thermodynamic data for species '{params.species}'. {source}"
+    
+    # Extract properties (molar and mass-based)
+    h_mole = gas.enthalpy_mole / 1000.0   # J/kmol -> kJ/kmol
+    s_mole = gas.entropy_mole / 1000.0    # J/kmol/K -> kJ/kmol/K
+    cp_mole = gas.cp_mole / 1000.0        # J/kmol/K -> kJ/kmol/K
+    
+    mw = gas.mean_molecular_weight        # g/mol
+    h_mass = gas.enthalpy_mass / 1000.0   # kJ/kg
+    cp_mass = gas.cp_mass / 1000.0        # kJ/kg/K
+    
+    return f"""
+=== Thermodynamic Properties for {params.species} ===
+Source: {source}
+State: {params.temperature_k:.2f} K, {params.pressure_bar:.4f} bar
+
+Molar Mass: {mw:.4f} g/mol
+
+Molar Properties:
+  • Enthalpy (h):       {h_mole:.2f} kJ/kmol
+  • Entropy (s):        {s_mole:.2f} kJ/kmol·K
+  • Specific Heat (Cp): {cp_mole:.2f} kJ/kmol·K
+
+Mass Properties:
+  • Enthalpy (h):       {h_mass:.2f} kJ/kg
+  • Specific Heat (Cp): {cp_mass:.4f} kJ/kg·K
+"""
+
+
+@mcp.tool()
+def check_species_availability(params: SpeciesAvailabilityInput) -> str:
+    """Check which database contains specific species.
+    
+    Useful for planning simulations and verifying species availability before calculations.
+    Searches GRI-Mech 3.0 and NASA Gas Database.
+    """
+    results = []
+    
+    # Load species name sets once for efficiency
+    try:
+        gri_names = {s.name.upper() for s in ct.Species.list_from_file('gri30.yaml')}
+    except Exception:
+        gri_names = set()
+    
+    nasa_gas_path = get_custom_mechanisms_dir() / "nasa_gas.yaml"
+    try:
+        nasa_names = {s.name.upper() for s in ct.Species.list_from_file(str(nasa_gas_path))}
+    except Exception:
+        nasa_names = set()
+    
+    for sp in params.species_list:
+        sp_upper = sp.upper()
+        if sp_upper in gri_names:
+            results.append(f"  {sp}: ✓ Available (GRI-Mech 3.0)")
+        elif sp_upper in nasa_names:
+            results.append(f"  {sp}: ✓ Available (NASA Gas Database)")
+        else:
+            results.append(f"  {sp}: ✗ NOT FOUND")
+    
+    header = f"""Species Availability Check:
+
+Searched databases:
+  • GRI-Mech 3.0: {len(gri_names)} species
+  • NASA Gas Database: {len(nasa_names)} species
+
+Results:
+"""
+    return header + "\n".join(results)
+
+
+@mcp.tool()
 def calculate_metal_combustion_equilibrium(params: MetalCombustionInput) -> str:
     """Calculate equilibrium temperature and products for metal-oxygen/air combustion.
     
@@ -1200,44 +1153,6 @@ def get_species_production_contributors(params: SpeciesProductionInput) -> str:
 # Reactor Network Tools
 # =============================================================================
 
-class BatchReactorInput(BaseModel):
-    """Input model for batch reactor simulation."""
-    
-    name: str = Field(
-        ...,
-        description="The ID of the mixture on the lab bench",
-        examples=["flame_1", "reactor"],
-    )
-    duration: float = Field(
-        ...,
-        gt=0,
-        description="Integration time in seconds (e.g., 0.01 for 10ms)",
-        examples=[0.001, 0.01, 0.1],
-    )
-    steps: int = Field(
-        default=10,
-        ge=2,
-        le=100,
-        description="Number of time-points to report in the output summary",
-    )
-
-
-class IgnitionDelayInput(BaseModel):
-    """Input model for ignition delay calculation."""
-    
-    name: str = Field(
-        ...,
-        description="The ID of the mixture on the lab bench",
-        examples=["flame_1", "reactor"],
-    )
-    max_time: float = Field(
-        default=1.0,
-        gt=0,
-        description="Maximum time to simulate before giving up (seconds)",
-        examples=[0.1, 1.0, 10.0],
-    )
-
-
 @mcp.tool()
 def run_batch_reactor(params: BatchReactorInput) -> str:
     """Simulate a Constant Pressure (Ideal Gas) Batch Reactor over time.
@@ -1302,7 +1217,8 @@ def compute_ignition_delay(params: IgnitionDelayInput) -> str:
         initial_X = gas.X.copy()
         
         # Create a copy for simulation (don't modify original)
-        gas_copy = ct.Solution(gas.name)
+        # Use gas.source to get the full mechanism file path (gas.name only returns the phase name)
+        gas_copy = ct.Solution(gas.source)
         gas_copy.TPX = initial_T, initial_P, initial_X
         
         # Setup reactor
@@ -1457,6 +1373,17 @@ def run_equilibrium_sweep(
     After the table, briefly summarize the trend. Does increasing {parameter} raise or lower the temperature?
     """
 
+# =============================================================================
+# Resources
+# =============================================================================
+
+@mcp.resource("cantera://nasa_gas")
+def nasa_gas():
+    """
+    Load the NASA gas thermodynamics database.
+    """
+    return CanteraGas("nasa_gas.yaml")
+    
 
 # =============================================================================
 # Server Entry Point
