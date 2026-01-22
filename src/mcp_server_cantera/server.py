@@ -1167,7 +1167,7 @@ def run_batch_reactor(params: BatchReactorInput) -> str:
         gas = get_solution(params.name)
         
         # Create a temporary reactor environment
-        r = ct.IdealGasReactor(gas)
+        r = ct.IdealGasReactor(gas, clone=False)
         sim = ct.ReactorNet([r])
         
         times = np.linspace(0, params.duration, params.steps)
@@ -1184,13 +1184,13 @@ def run_batch_reactor(params: BatchReactorInput) -> str:
         for t in times:
             sim.advance(t)
             # Format mole fractions
-            concs = [f"{r.thermo.X[i]:.2e}" for i in top_species_indices]
+            concs = [f"{r.phase.X[i]:.2e}" for i in top_species_indices]
             row = f"| {t:.2e} | {r.T:.1f} | {' | '.join(concs)} |"
             report.append(row)
         
         # IMPORTANT: Sync the lab bench object to the final state
         # so subsequent tools see the "reacted" mixture.
-        gas.TPX = r.thermo.TPX
+        gas.TPX = r.phase.TPX
         
         report.append(f"\nFinal T: {gas.T:.1f} K (ΔT = {gas.T - times[0]:.1f} K)")
         
@@ -1224,7 +1224,7 @@ def compute_ignition_delay(params: IgnitionDelayInput) -> str:
         gas_copy.TPX = initial_T, initial_P, initial_X
         
         # Setup reactor
-        r = ct.IdealGasReactor(gas_copy)
+        r = ct.IdealGasReactor(gas_copy, clone=False)
         sim = ct.ReactorNet([r])
         
         previous_T = initial_T
