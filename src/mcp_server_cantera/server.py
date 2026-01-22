@@ -52,6 +52,8 @@ CRITICAL RULES:
 4. **Safety:** If a user asks for a detonation simulation or hazardous mixture, provide the scientific results but add a standard safety disclaimer.
 5. **Ambient Conditions:** If the user asks for a reaction at ambient conditions, use 298 K and 1 atm (101,325 Pa).
 6. **Temperature:** If the user asks for a reaction at a specific temperature, use that temperature. Otherwise, use 298 K.
+7. **Generated Data:** If data or figures are generated, save it in the output directory.
+8. **Generated Scripts:** If python scripts are generated to complete a user request, save them in the scripts directory.
 """
 
 # Create the FastMCP server instance

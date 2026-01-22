@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-    {name = "Dave Tew"}
+    {name = "David Tew, Step Function LLC, davetew@step-function.com"}
 ]
 keywords = ["mcp", "cantera", "llm", "chemistry", "thermodynamics", "kinetics"]
 classifiers = [
