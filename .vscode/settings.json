@@ -1,0 +1,13 @@
+{
+  "github.copilot.chat.mcp.servers": {
+    "cantera": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/davidtew/Library/CloudStorage/GoogleDrive-davetew@step-function.com/My Drive/Github/mcp-server-cantera",
+        "run",
+        "mcp-server-cantera"
+      ]
+    }
+  }
+}
