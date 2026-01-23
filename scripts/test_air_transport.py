@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 #!/usr/bin/env python3
 """Calculate transport properties of air at standard conditions."""
 

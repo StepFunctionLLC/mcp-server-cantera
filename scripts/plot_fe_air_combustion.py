@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 
 import os
 import re

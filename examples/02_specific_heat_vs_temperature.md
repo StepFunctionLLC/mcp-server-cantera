@@ -1,3 +1,4 @@
+<!-- Copyright Step Function, 2026 -->
 # Example 2: Plotting Specific Heat vs Temperature
 
 This example demonstrates how to use the Cantera MCP Server to calculate and plot the specific heat of air across a range of temperatures.

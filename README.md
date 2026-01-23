@@ -1,3 +1,4 @@
+<!-- Copyright Step Function, 2026 -->
 # [mcp-server-cantera](https://github.com/davetew/mcp-server-cantera)
 
 An MCP server wrapped around Cantera to facilitate use by an LLM for accurate thermodynamic and transport property, equilibrium, and chemical kinetics calculations.

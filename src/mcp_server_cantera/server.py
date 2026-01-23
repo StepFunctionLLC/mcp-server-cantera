@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 """Main MCP server module for Cantera integration.
 
 This module provides an MCP server that wraps Cantera functionality to enable

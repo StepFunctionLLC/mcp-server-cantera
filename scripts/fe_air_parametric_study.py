@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 #!/usr/bin/env python3
 """
 Parametric study of Fe/air combustion across equivalence ratios.

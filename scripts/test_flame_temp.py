@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 #!/usr/bin/env python3
 """Test script to calculate adiabatic flame temperature for methane-air combustion."""
 

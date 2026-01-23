@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 """
 Plot methane/air adiabatic flame temperature and product composition vs equivalence ratio.
 Data generated using Cantera MCP Server with GRI-Mech 3.0.
