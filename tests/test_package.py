@@ -25,3 +25,22 @@ def test_server_module_import():
     
     assert hasattr(server, "main")
     assert hasattr(server, "mcp")
+
+
+def test_server_instructions_configured():
+    """Test that the MCP server has instructions set for hierarchical agent integration."""
+    from mcp_server_cantera.server import mcp
+    
+    assert mcp.instructions is not None
+    assert len(mcp.instructions) > 0
+    assert "MULTI-AGENT" in mcp.instructions.upper()
+    assert "WORKFLOW" in mcp.instructions.upper()
+
+
+def test_nasa_gas_resource_callable():
+    """Test that the nasa_gas resource function is callable and does not reference undefined symbols."""
+    from mcp_server_cantera.server import nasa_gas
+    
+    result = nasa_gas()
+    assert isinstance(result, str)
+    assert "NASA" in result
