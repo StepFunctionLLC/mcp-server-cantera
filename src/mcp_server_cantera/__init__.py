@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 """MCP Server for Cantera.
 
 An MCP server wrapped around Cantera to facilitate use by an LLM for accurate 

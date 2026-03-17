@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 """
 Plot H2/air batch reactor temperature vs time.
 Data generated using Cantera MCP Server with GRI-Mech 3.0.

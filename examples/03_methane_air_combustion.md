@@ -1,3 +1,4 @@
+<!-- Copyright Step Function, 2026 -->
 # Example 3: Methane/Air Combustion Analysis
 
 This example demonstrates how to use the Cantera MCP Server to calculate and plot adiabatic flame temperatures and product gas compositions for methane/air combustion across a range of equivalence ratios.

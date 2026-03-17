@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 #!/usr/bin/env python3
 """Plot adiabatic flame temperature vs equivalence ratio for jet fuel/air combustion."""
 

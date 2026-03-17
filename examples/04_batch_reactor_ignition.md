@@ -1,3 +1,4 @@
+<!-- Copyright Step Function, 2026 -->
 # Example 4: Hydrogen/Air Batch Reactor Ignition
 
 This example demonstrates how to use the Cantera MCP Server to simulate auto-ignition of a hydrogen/air mixture in a batch reactor and determine the ignition delay time.

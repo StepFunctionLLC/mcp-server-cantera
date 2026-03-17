@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 """Basic tests for the package structure."""
 
 import pytest

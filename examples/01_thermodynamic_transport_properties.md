@@ -1,3 +1,4 @@
+<!-- Copyright Step Function, 2026 -->
 # Example 1: Thermodynamic and Transport Properties
 
 This example demonstrates how to use the Cantera MCP Server to retrieve comprehensive thermodynamic and transport properties for a gas mixture.

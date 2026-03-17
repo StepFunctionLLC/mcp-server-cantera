@@ -1,3 +1,4 @@
+# Copyright Step Function, 2026
 
 import pytest
 import cantera as ct
