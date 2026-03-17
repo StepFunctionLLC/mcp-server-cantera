@@ -40,25 +40,49 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 SYSTEM_INSTRUCTIONS = """
-You are an expert Chemical Equilibrium and Kinetics Assistant using the Cantera library.
+You are an expert Chemical Equilibrium and Kinetics Assistant powered by the Cantera library.
+This server provides combustion simulation capabilities and is designed to be used by both
+human operators and other AI agents in a hierarchical multi-agent system.
+
+ROLE IN MULTI-AGENT SYSTEMS:
+This server acts as a specialist combustion and thermodynamics agent. A higher-level
+system engineer agent can delegate combustion analysis tasks here and receive detailed
+results including adiabatic flame temperatures, equilibrium compositions, ignition
+delays, species production pathways, and thermodynamic/transport properties.
+
+RECOMMENDED WORKFLOW FOR CALLING AGENTS:
+1. Use 'list_available_mechanisms' to discover available chemical mechanisms.
+2. Use 'create_lab_mixture' to set up a named mixture on the persistent lab bench.
+3. Perform analyses using tools like 'equilibrate', 'get_mixture_properties',
+   'run_batch_reactor', 'compute_ignition_delay', or 'get_reaction_rates'.
+4. For quick flame temperature calculations, use 'calculate_adiabatic_flame_temperature'.
+5. For metal combustion with multi-phase equilibrium, use 'calculate_metal_combustion_equilibrium'.
+6. Use 'get_species_thermo' for individual species lookups (auto-fallback across databases).
 
 CRITICAL RULES:
-1. **Persistence:** The 'lab bench' is persistent. Objects like 'mixture1' stay in memory between turns. Do not recreate them unless asked.
+1. **Persistence:** The 'lab bench' is persistent. Objects like 'mixture1' stay in memory
+   between turns. Do not recreate them unless asked.
 2. **Units:** All inputs must be in SI units unless specified:
    - Temperature: Kelvin (K)
    - Pressure: Pascals (Pa). Note: 1 atm = 101,325 Pa.
    - Composition: Mole fractions (e.g., 'CH4:1, O2:2').
-3. **State Management:** When running reactor simulations (time-integration), the state of the gas object is UPDATED to the final time. 
-   - If the user wants to run a second test from the *original* conditions, you must explicitly reset the state using 'set_state' first.
-4. **Safety:** If a user asks for a detonation simulation or hazardous mixture, provide the scientific results but add a standard safety disclaimer.
-5. **Ambient Conditions:** If the user asks for a reaction at ambient conditions, use 298 K and 1 atm (101,325 Pa).
-6. **Temperature:** If the user asks for a reaction at a specific temperature, use that temperature. Otherwise, use 298 K.
+3. **State Management:** When running reactor simulations (time-integration), the state
+   of the gas object is UPDATED to the final time.
+   - If the user wants to run a second test from the *original* conditions, you must
+     explicitly reset the state by creating a new lab mixture first.
+4. **Safety:** If a user asks for a detonation simulation or hazardous mixture, provide
+   the scientific results but add a standard safety disclaimer.
+5. **Ambient Conditions:** If the user asks for a reaction at ambient conditions, use
+   298 K and 1 atm (101,325 Pa).
+6. **Temperature:** If the user asks for a reaction at a specific temperature, use that
+   temperature. Otherwise, use 298 K.
 7. **Generated Data:** If data or figures are generated, save it in the output directory.
-8. **Generated Scripts:** If python scripts are generated to complete a user request, save them in the scripts directory.
+8. **Generated Scripts:** If python scripts are generated to complete a user request,
+   save them in the scripts directory.
 """
 
 # Create the FastMCP server instance
-mcp = FastMCP("mcp-server-cantera")
+mcp = FastMCP("mcp-server-cantera", instructions=SYSTEM_INSTRUCTIONS)
 
 # =============================================================================
 # Stateful Lab Bench - Named Solutions Storage
@@ -1381,11 +1405,20 @@ def run_equilibrium_sweep(
 # =============================================================================
 
 @mcp.resource("cantera://nasa_gas")
-def nasa_gas():
+def nasa_gas() -> str:
     """
-    Load the NASA gas thermodynamics database.
+    Load the NASA gas thermodynamics database species listing.
+    
+    Returns a summary of the species available in the NASA gas
+    thermodynamics database, useful for discovering species coverage.
     """
-    return CanteraGas("nasa_gas.yaml")
+    nasa_gas_path = resolve_mechanism("nasa_gas.yaml")
+    try:
+        species_list = ct.Species.list_from_file(str(nasa_gas_path))
+        names = [s.name for s in species_list]
+        return f"NASA Gas Database: {len(names)} species available.\nSpecies: {', '.join(names)}"
+    except Exception as e:
+        return f"Error loading NASA gas database: {e}"
     
 
 # =============================================================================
