@@ -1412,9 +1412,7 @@ def nasa_gas() -> str:
     Returns a summary of the species available in the NASA gas
     thermodynamics database, useful for discovering species coverage.
     """
-    nasa_gas_path = get_custom_mechanisms_dir() / "nasa_gas.yaml"
-    if not nasa_gas_path.exists():
-        return "NASA gas database not found."
+    nasa_gas_path = resolve_mechanism("nasa_gas.yaml")
     try:
         species_list = ct.Species.list_from_file(str(nasa_gas_path))
         names = [s.name for s in species_list]

@@ -38,9 +38,11 @@ def test_server_instructions_configured():
 
 
 def test_nasa_gas_resource_callable():
-    """Test that the nasa_gas resource function is callable and does not reference undefined symbols."""
+    """Test that the nasa_gas resource function is callable and returns meaningful data."""
     from mcp_server_cantera.server import nasa_gas
     
     result = nasa_gas()
     assert isinstance(result, str)
-    assert "NASA" in result
+    assert "NASA Gas Database" in result
+    assert "species available" in result
+    assert "O2" in result
