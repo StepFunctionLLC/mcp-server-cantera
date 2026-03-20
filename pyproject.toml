@@ -40,9 +40,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/davetew/mcp-server-cantera"
-Repository = "https://github.com/davetew/mcp-server-cantera"
-"Bug Tracker" = "https://github.com/davetew/mcp-server-cantera/issues"
+Homepage = "https://github.com/StepFunctionLLC/mcp-server-cantera"
+Repository = "https://github.com/StepFunctionLLC/mcp-server-cantera"
+"Bug Tracker" = "https://github.com/StepFunctionLLC/mcp-server-cantera/issues"
 
 [project.scripts]
 mcp-server-cantera = "mcp_server_cantera.server:main"
