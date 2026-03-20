@@ -119,12 +119,11 @@ def store_solution(name: str, gas: ct.Solution) -> None:
 # =============================================================================
 
 def get_custom_mechanisms_dir() -> Path:
-    """Get path to custom mechanisms directory.
+    """Get path to the bundled mechanisms directory.
     
-    Returns the mechanisms/ folder at the package root level.
-    Path: server.py -> mcp_server_cantera -> src -> mcp-server-cantera -> mechanisms
+    Returns the mechanisms/ folder shipped inside the package.
     """
-    return Path(__file__).parent.parent.parent / "mechanisms"
+    return Path(__file__).parent / "mechanisms"
 
 
 def discover_custom_mechanisms() -> list[tuple[str, str, Path]]:

@@ -2,4 +2,4 @@ include README.md
 include LICENSE
 include pyproject.toml
 recursive-include src/mcp_server_cantera *.py py.typed
-recursive-include mechanisms *.yaml *.yml
+recursive-include src/mcp_server_cantera/mechanisms *.yaml *.yml

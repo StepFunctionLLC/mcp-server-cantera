@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-    {name = "David Tew, Step Function LLC, davetew@step-function.com"}
+    {name = "David Tew", email = "davetew@step-function.com"}
 ]
 keywords = ["mcp", "cantera", "llm", "chemistry", "thermodynamics", "kinetics"]
 classifiers = [
@@ -52,6 +52,9 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+mcp_server_cantera = ["mechanisms/*.yaml", "mechanisms/*.yml"]
 
 [tool.black]
 line-length = 100
