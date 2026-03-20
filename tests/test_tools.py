@@ -37,23 +37,23 @@ def test_lab_bench_lifecycle():
         temperature=300,
         pressure=101325
     )
-    result_create = create_lab_mixture(create_input)
+    result_create = create_lab_mixture.fn(create_input)
     assert "Created mixture 'test_mix_1'" in result_create
 
     # 2. Get Properties
     prop_input = LabBenchMeasurementInput(name="test_mix_1")
-    result_props = get_mixture_properties(prop_input)
+    result_props = get_mixture_properties.fn(prop_input)
     assert "Temperature:           300.00 K" in result_props
     assert "Pressure:              101325.00 Pa" in result_props
 
     # 3. Equilibrate (HP) - Adiabatic
     eq_input = LabBenchEquilibriumInput(name="test_mix_1", basis="HP")
-    result_eq = equilibrate(eq_input)
+    result_eq = equilibrate.fn(eq_input)
     assert "Equilibrium Calculation" in result_eq
     assert "Temperature:" in result_eq
     
     # 4. Check Properties again (should be hot now)
-    result_props_2 = get_mixture_properties(prop_input)
+    result_props_2 = get_mixture_properties.fn(prop_input)
     assert "300.00 K" not in result_props_2
 
 def test_run_batch_reactor():
@@ -65,14 +65,14 @@ def test_run_batch_reactor():
         temperature=1000,
         pressure=101325
     )
-    create_lab_mixture(create_input)
+    create_lab_mixture.fn(create_input)
 
     reactor_input = BatchReactorInput(
         name="reactor_mix",
         duration=0.001, # 1ms
         steps=5
     )
-    result_reactor = run_batch_reactor(reactor_input)
+    result_reactor = run_batch_reactor.fn(reactor_input)
     assert "Batch Reactor Simulation" in result_reactor
     assert "Final T:" in result_reactor
 
@@ -85,10 +85,10 @@ def test_ignition_delay():
         temperature=1000,
         pressure=101325
     )
-    create_lab_mixture(create_input)
+    create_lab_mixture.fn(create_input)
 
     delay_input = IgnitionDelayInput(name="ignition_mix", max_time=0.1)
-    result_delay = compute_ignition_delay(delay_input)
+    result_delay = compute_ignition_delay.fn(delay_input)
     
     assert "Ignition Delay Time:" in result_delay
     assert "seconds" in result_delay
@@ -105,7 +105,7 @@ def test_adiabatic_flame_temp_methane():
         initial_temperature=300,
         pressure=101325
     )
-    result = calculate_adiabatic_flame_temperature(input_data)
+    result = calculate_adiabatic_flame_temperature.fn(input_data)
     assert "Adiabatic flame temperature:" in result
     assert "222" in result or "223" in result # T ~ 2225K
     assert "(stoichiometric)" in result
@@ -117,7 +117,7 @@ def test_metal_combustion_fe():
         oxidizer="air",
         equivalence_ratio=1.0
     )
-    result = calculate_metal_combustion_equilibrium(input_data)
+    result = calculate_metal_combustion_equilibrium.fn(input_data)
     
     assert "Metal Combustion Equilibrium Calculation (Multi-Phase)" in result
     assert "Adiabatic flame temperature:" in result
@@ -129,7 +129,7 @@ def test_metal_combustion_fe():
 def test_check_species_availability():
     """Test checking for species in GRI vs NASA."""
     input_data = SpeciesAvailabilityInput(species_list=["CH4", "He", "NonExistentSpecies123"])
-    result = check_species_availability(input_data)
+    result = check_species_availability.fn(input_data)
     
     assert "CH4: ✓ Available (GRI-Mech 3.0)" in result
     assert "He: ✓ Available" in result
@@ -142,7 +142,7 @@ def test_get_species_thermo_fallback():
         temperature_k=300,
         pressure_bar=1.0
     )
-    result = get_species_thermo(input_data)
+    result = get_species_thermo.fn(input_data)
     
     assert "Source: NASA Gas Database" in result or "Source: GRI-Mech 3.0" in result
     assert "Molar Mass:" in result
