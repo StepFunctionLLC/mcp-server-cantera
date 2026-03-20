@@ -41,7 +41,7 @@ def test_nasa_gas_resource_callable():
     """Test that the nasa_gas resource function is callable and returns meaningful data."""
     from mcp_server_cantera.server import nasa_gas
     
-    result = nasa_gas()
+    result = nasa_gas.fn()
     assert isinstance(result, str)
     assert "NASA Gas Database" in result
     assert "species available" in result
