@@ -1,11 +1,11 @@
 logged_date,path,title,total,unique
-2026-03-21,/StepFunctionLLC/mcp-server-cantera,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,30,4
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/actions,Workflow runs · StepFunctionLLC/mcp-server-cantera,14,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/tree/main/traffic-logger/data,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,9,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/actions/workflows/log-traffic.yml,Log Repo Traffic · Workflow runs · StepFunctionLLC/mcp-server-cantera,8,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/tree/main,mcp-server-cantera/data at main · StepFunctionLLC/mcp-server-cantera,8,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/tree/main/data,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,6,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/agents,Agents · StepFunctionLLC/mcp-server-cantera,5,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/branches,Branches · StepFunctionLLC/mcp-server-cantera,4,2
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/blob/main/.github/workflows/log-traffic.yml,Editing mcp-server-cantera/.github/workflows/log-traffic.yml at main · StepFu...,4,1
-2026-03-21,/StepFunctionLLC/mcp-server-cantera/graphs/traffic,Traffic · StepFunctionLLC/mcp-server-cantera,4,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,40,5
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/actions,Workflow runs · StepFunctionLLC/mcp-server-cantera,15,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/tree/main/traffic-logger/data,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,13,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/tree/main,mcp-server-cantera/data at main · StepFunctionLLC/mcp-server-cantera,9,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/actions/workflows/log-traffic.yml,Log Repo Traffic · Workflow runs · StepFunctionLLC/mcp-server-cantera,8,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/agents,Agents · StepFunctionLLC/mcp-server-cantera,7,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/branches,Branches · StepFunctionLLC/mcp-server-cantera,6,2
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/tree/main/data,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,6,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/blob/main/traffic-logger/data/referrers.csv,mcp-server-cantera/traffic-logger/data at main · StepFunctionLLC/mcp-server-c...,5,1
+2026-03-22,/StepFunctionLLC/mcp-server-cantera/blob/main/.github/workflows/log-traffic.yml,Editing mcp-server-cantera/.github/workflows/log-traffic.yml at main · StepFu...,4,1
