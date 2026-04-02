@@ -1,11 +1,11 @@
 logged_date,path,title,total,unique
-2026-04-01,/StepFunctionLLC/mcp-server-cantera,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,39,5
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/tree/main/traffic-logger/data,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,15,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/actions,Workflow runs · StepFunctionLLC/mcp-server-cantera,12,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/tree/main,mcp-server-cantera/data at main · StepFunctionLLC/mcp-server-cantera,9,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/actions/workflows/log-traffic.yml,Log Repo Traffic · Workflow runs · StepFunctionLLC/mcp-server-cantera,8,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/branches,Branches · StepFunctionLLC/mcp-server-cantera,6,2
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/agents,Agents · StepFunctionLLC/mcp-server-cantera,6,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/tree/main/data,StepFunctionLLC/mcp-server-cantera: An MCP server wrapped around Cantera to f...,6,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/blob/main/traffic-logger/data/clones.csv,mcp-server-cantera/traffic-logger/data at main · StepFunctionLLC/mcp-server-c...,5,1
-2026-04-01,/StepFunctionLLC/mcp-server-cantera/blob/main/traffic-logger/data/referrers.csv,mcp-server-cantera/traffic-logger/data at main · StepFunctionLLC/mcp-server-c...,5,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera,Overview,14,3
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/tree/main/traffic-logger/data,/tree/main/traffic-logger/data,6,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/tree/main/traffic-logger,/tree/main/traffic-logger,3,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/actions/runs/23344104535,/actions/runs/23344104535,2,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/actions/runs/23344104535/job/67905486990,/actions/runs/23344104535/job/67905486990,2,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/agents,/agents,2,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/blob/main/pyproject.toml,/blob/main/pyproject.toml,2,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/blob/main/traffic-logger/data/clones.csv,/blob/main/traffic-logger/data/clones.csv,2,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/blob/main/traffic-logger/data/referrers.csv,/blob/main/traffic-logger/data/referrers.csv,2,1
+2026-04-02,/StepFunctionLLC/mcp-server-cantera/blob/main/traffic-logger/data/views.csv,/blob/main/traffic-logger/data/views.csv,2,1
