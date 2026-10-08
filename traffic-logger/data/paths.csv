@@ -1,4 +1,11 @@
 logged_date,path,title,total,unique
-2026-10-07,/StepFunctionLLC/mcp-server-cantera,Overview,4,3
-2026-10-07,/StepFunctionLLC/mcp-server-cantera/blob/main/README.md,/blob/main/README.md,3,1
-2026-10-07,/StepFunctionLLC/mcp-server-cantera/blob/main/examples/01_thermodynamic_transport_properties.md,/blob/main/examples/01_thermodynamic_transport_properties.md,2,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera,Overview,4,3
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/blob/main/AGENTS.md,/blob/main/AGENTS.md,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/blob/main/README.md,/blob/main/README.md,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/blob/main/examples/02_specific_heat_vs_temperature.md,/blob/main/examples/02_specific_heat_vs_temperature.md,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/blob/main/scripts/test_flame_temp.py,/blob/main/scripts/test_flame_temp.py,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/blob/main/src/mcp_server_cantera/server.py,/blob/main/src/mcp_server_cantera/server.py,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/tree/main,/tree/main,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/tree/main/examples,/tree/main/examples,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/tree/main/property_data,/tree/main/property_data,1,1
+2026-10-08,/StepFunctionLLC/mcp-server-cantera/tree/main/scripts,/tree/main/scripts,1,1
